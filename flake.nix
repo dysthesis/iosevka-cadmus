@@ -1,35 +1,87 @@
 {
-  description = "Description for the project";
+  description = "Iosevka Cadmus, a low-DPI terminal font";
 
   inputs = {
     flake-parts.url = "github:hercules-ci/flake-parts";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
-  outputs = inputs@{ flake-parts, ... }:
+  outputs =
+    inputs@{ flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
-      imports = [
-        # To import an internal flake module: ./other.nix
-        # To import an external flake module:
-        #   1. Add foo to inputs
-        #   2. Add foo as a parameter to the outputs function
-        #   3. Add here: foo.flakeModule
-
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+        "aarch64-darwin"
+        "x86_64-darwin"
       ];
-      systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin" ];
-      perSystem = { config, self', inputs', pkgs, system, ... }: {
-        # Per-system attributes can be defined here. The self' and inputs'
-        # module parameters provide easy access to attributes of the same
-        # system.
 
-        # Equivalent to  inputs'.nixpkgs.legacyPackages.hello;
-        packages.default = pkgs.hello;
-      };
-      flake = {
-        # The usual flake attributes can be defined here, including system-
-        # agnostic ones like nixosModule and system-enumerating ones, although
-        # those are more easily expressed in perSystem.
+      perSystem =
+        { pkgs, ... }:
+        let
+          iosevkaCadmus = pkgs.iosevka.override {
+            set = "Cadmus";
+            privateBuildPlan = {
+              family = "Iosevka Cadmus";
+              spacing = "term";
+              serifs = "sans";
+              noCvSs = true;
+              exportGlyphNames = false;
 
-      };
+              variants.inherits = "ss03";
+
+              ligations.enables = [
+                "eqeq"
+                "exeq"
+                "lteq"
+                "gteq"
+                "arrow-r-hyphen"
+                "arrow-r-equal"
+              ];
+
+              weights = {
+                Medium = {
+                  shape = 500;
+                  menu = 500;
+                  css = 500;
+                };
+                Bold = {
+                  shape = 700;
+                  menu = 700;
+                  css = 700;
+                };
+              };
+
+              slopes = {
+                Upright = {
+                  angle = 0;
+                  shape = "upright";
+                  menu = "upright";
+                  css = "normal";
+                };
+                Italic = {
+                  angle = 9.4;
+                  shape = "italic";
+                  menu = "italic";
+                  css = "italic";
+                };
+              };
+
+              widths.Normal = {
+                shape = 600;
+                menu = 5;
+                css = "normal";
+              };
+            };
+          };
+        in
+        {
+          checks.default = iosevkaCadmus;
+
+          packages = {
+            default = iosevkaCadmus;
+            iosevka-cadmus = iosevkaCadmus;
+          };
+        };
     };
 }
