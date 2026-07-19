@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Iosevka Cadmus Browser Proof</title>
+  <style>
+    @font-face {
+      font-family: "Iosevka Cadmus";
+      src: url("fonts/IosevkaCadmus-Medium.ttf") format("truetype");
+      font-style: normal;
+      font-weight: 500;
+      font-display: block;
+    }
+
+    @font-face {
+      font-family: "Iosevka Cadmus";
+      src: url("fonts/IosevkaCadmus-MediumItalic.ttf") format("truetype");
+      font-style: italic;
+      font-weight: 500;
+      font-display: block;
+    }
+
+    @font-face {
+      font-family: "Iosevka Cadmus";
+      src: url("fonts/IosevkaCadmus-Bold.ttf") format("truetype");
+      font-style: normal;
+      font-weight: 700;
+      font-display: block;
+    }
+
+    @font-face {
+      font-family: "Iosevka Cadmus";
+      src: url("fonts/IosevkaCadmus-BoldItalic.ttf") format("truetype");
+      font-style: italic;
+      font-weight: 700;
+      font-display: block;
+    }
+
+    :root {
+      color-scheme: dark light;
+      --ink: #f6f2e8;
+      --muted: #97958e;
+      --paper: #0a0a09;
+      --panel: #11110f;
+      --line: #34332e;
+      --signal: #ffaa88;
+      --proof: #90aa90;
+      --light-paper: #eee9dd;
+      --light-ink: #151714;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      background: var(--paper);
+    }
+
+    body {
+      min-width: 320px;
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, transparent 49.9%, #171713 50%, transparent 50.1%),
+        var(--paper);
+      font-family: system-ui, sans-serif;
+    }
+
+    main {
+      width: min(1540px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 32px 0 64px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      gap: 28px;
+      padding: 0 0 24px;
+      border-bottom: 1px solid var(--signal);
+    }
+
+    h1 {
+      margin: 0;
+      font: 500 clamp(34px, 5vw, 72px)/0.9 "Iosevka Cadmus", monospace;
+      letter-spacing: -0.045em;
+    }
+
+    .kicker,
+    .meta,
+    .label {
+      color: var(--muted);
+      font: 650 11px/1.4 system-ui, sans-serif;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .kicker {
+      margin: 0 0 12px;
+      color: var(--signal);
+    }
+
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(2, auto);
+      gap: 4px 22px;
+      margin: 0;
+      text-align: right;
+    }
+
+    .meta dt {
+      color: var(--signal);
+    }
+
+    .meta dd {
+      margin: 0;
+    }
+
+    .proof-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 1px;
+      margin-top: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+    }
+
+    section {
+      min-width: 0;
+      padding: 22px;
+      background: var(--panel);
+    }
+
+    .confusables {
+      grid-column: span 7;
+    }
+
+    .weights {
+      grid-column: span 5;
+    }
+
+    .ligatures {
+      grid-column: span 12;
+    }
+
+    .code {
+      grid-column: span 8;
+    }
+
+    .scale {
+      grid-column: span 4;
+    }
+
+    .unicode,
+    .editor {
+      grid-column: span 6;
+    }
+
+    h2 {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin: 0 0 18px;
+      font: 650 12px/1 system-ui, sans-serif;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    h2::after {
+      content: attr(data-index);
+      color: var(--signal);
+      font: 500 11px/1 "Iosevka Cadmus", monospace;
+    }
+
+    .font {
+      margin: 0;
+      font-family: "Iosevka Cadmus", monospace;
+      font-size: 13.5px;
+      font-synthesis: none;
+      font-feature-settings: "calt" 1, "liga" 1;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    .confusable-line {
+      margin: 0;
+      font: 500 clamp(23px, 3vw, 42px)/1.45 "Iosevka Cadmus", monospace;
+      font-synthesis: none;
+      letter-spacing: 0.025em;
+      word-spacing: 0.3em;
+    }
+
+    .confusable-line + .confusable-line {
+      color: var(--proof);
+      border-top: 1px solid var(--line);
+    }
+
+    .weight-row {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      align-items: baseline;
+      gap: 12px;
+      padding: 8px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .weight-row .font {
+      overflow: hidden;
+      font-size: 17px;
+      white-space: nowrap;
+    }
+
+    .medium {
+      font-weight: 500;
+    }
+
+    .bold {
+      font-weight: 700;
+    }
+
+    .italic {
+      font-style: italic;
+    }
+
+    .ligation-columns {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1px;
+      background: var(--line);
+    }
+
+    .ligation-column {
+      padding: 16px;
+      background: #0c0c0b;
+    }
+
+    .ligation-column.light {
+      color: var(--light-ink);
+      background: var(--light-paper);
+    }
+
+    .ligation-column .font {
+      margin-top: 8px;
+      font-size: 18px;
+      word-spacing: 0.65em;
+    }
+
+    .raw {
+      color: var(--proof);
+      font-variant-ligatures: none;
+      font-feature-settings: "calt" 0, "liga" 0;
+    }
+
+    .code-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .code-block {
+      min-width: 0;
+      border-top: 2px solid var(--proof);
+    }
+
+    .code-block .label {
+      display: block;
+      padding: 7px 0;
+    }
+
+    .code-block .font {
+      overflow: hidden;
+      padding: 12px;
+      color: #deded7;
+      background: #080807;
+    }
+
+    .scale-row {
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      align-items: baseline;
+      gap: 10px;
+      padding: 7px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .scale-row .font {
+      overflow: hidden;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    .unicode .font {
+      color: var(--light-ink);
+      background: var(--light-paper);
+      font-size: 21px;
+      line-height: 1.75;
+      padding: 18px;
+    }
+
+    [contenteditable] {
+      min-height: 152px;
+      padding: 18px;
+      outline: 1px dashed var(--proof);
+      caret-color: var(--signal);
+    }
+
+    [contenteditable]:focus {
+      outline-color: var(--signal);
+    }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      padding-top: 18px;
+      color: var(--muted);
+      font: 500 11px/1.5 system-ui, sans-serif;
+    }
+
+    @media (max-width: 900px) {
+      header {
+        grid-template-columns: 1fr;
+      }
+
+      .meta {
+        text-align: left;
+      }
+
+      .confusables,
+      .weights,
+      .code,
+      .scale,
+      .unicode,
+      .editor {
+        grid-column: span 12;
+      }
+    }
+
+    @media (max-width: 600px) {
+      main {
+        width: min(100% - 20px, 1540px);
+        padding-top: 20px;
+      }
+
+      section {
+        padding: 16px;
+      }
+
+      .ligation-columns,
+      .code-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <p class="kicker">Terminal type proof / build output</p>
+        <h1>Iosevka Cadmus</h1>
+      </div>
+      <dl class="meta">
+        <dt>Cell</dt><dd>600 units</dd>
+        <dt>Weight</dt><dd>500 / 700</dd>
+        <dt>Spacing</dt><dd>term</dd>
+        <dt>Raster</dt><dd id="raster">CSS px</dd>
+      </dl>
+    </header>
+
+    <div class="proof-grid">
+      <section class="confusables">
+        <h2 data-index="01">Confusable classes</h2>
+        <p class="confusable-line">0 O o   1 l I |   rn m</p>
+        <p class="confusable-line">8 B   5 S   2 Z   g 9 q</p>
+        <p class="confusable-line">Il1|  O0o  rnmmrn  B8B8</p>
+      </section>
+
+      <section class="weights">
+        <h2 data-index="02">Face matrix</h2>
+        <div class="weight-row"><span class="label">Medium</span><span class="font medium">Ag 0O 1lI == -&gt;</span></div>
+        <div class="weight-row"><span class="label">Bold</span><span class="font bold">Ag 0O 1lI == -&gt;</span></div>
+        <div class="weight-row"><span class="label">Italic</span><span class="font medium italic">Ag 0O 1lI == -&gt;</span></div>
+        <div class="weight-row"><span class="label">Bold italic</span><span class="font bold italic">Ag 0O 1lI == -&gt;</span></div>
+      </section>
+
+      <section class="ligatures">
+        <h2 data-index="03">Contextual ligatures / raw control</h2>
+        <div class="ligation-columns">
+          <div class="ligation-column">
+            <span class="label">calt on / dark</span>
+            <p class="font">== === != !== !=== &lt;= &gt;= -&gt; -&gt;&gt; --&gt; ---&gt; =&gt; =&gt;&gt; ==&gt;</p>
+            <p class="font">&lt;&lt; &gt;&gt; &lt;&lt;= &gt;&gt;= 2&gt;&amp;1 &gt;&gt;log &lt;&lt;EOF</p>
+          </div>
+          <div class="ligation-column light">
+            <span class="label">calt off / light</span>
+            <p class="font raw">== === != !== !=== &lt;= &gt;= -&gt; -&gt;&gt; --&gt; ---&gt; =&gt; =&gt;&gt; ==&gt;</p>
+            <p class="font raw">&lt;&lt; &gt;&gt; &lt;&lt;= &gt;&gt;= 2&gt;&amp;1 &gt;&gt;log &lt;&lt;EOF</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="code">
+        <h2 data-index="04">Corpus fragments</h2>
+        <div class="code-grid">
+          <div class="code-block">
+            <span class="label">Nix</span>
+            <pre class="font">{ pkgs, lib, ... }:
+let inherit (lib) mkIf mkMerge;
+in {
+  services.demo.enable =
+    mkIf pkgs.stdenv.isLinux true;
+}</pre>
+          </div>
+          <div class="code-block">
+            <span class="label">Rust</span>
+            <pre class="font">impl&lt;'a, T&gt; Parser&lt;'a, T&gt;
+where T: Iterator&lt;Item = &amp;'a str&gt;
+{
+  fn next(&amp;mut self) -&gt; Result&lt;Token&gt; {
+    self.input.next().map(parse)
+  }
+}</pre>
+          </div>
+          <div class="code-block">
+            <span class="label">Lean</span>
+            <pre class="font">theorem map_id (xs : List α) :
+    xs.map id = xs := by
+  induction xs with
+  | nil =&gt; rfl
+  | cons x xs ih =&gt; simp [ih]</pre>
+          </div>
+          <div class="code-block">
+            <span class="label">Shell / jj</span>
+            <pre class="font">if [[ -n "$target" &amp;&amp; "$n" -ge 1 ]]; then
+  command &gt;out 2&gt;&amp;1 || exit 1
+fi
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; conflict 1 of 1
+-old_value
++new_value
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; conflict 1 of 1 ends</pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="scale">
+        <h2 data-index="05">Pixel-size ladder</h2>
+        <div class="scale-row"><span class="label">12 px</span><span class="font" style="font-size:12px">Hamburgefonts 0O1lI</span></div>
+        <div class="scale-row"><span class="label">13 px</span><span class="font" style="font-size:13px">Hamburgefonts 0O1lI</span></div>
+        <div class="scale-row"><span class="label">13.5 px</span><span class="font" style="font-size:13.5px">Hamburgefonts 0O1lI</span></div>
+        <div class="scale-row"><span class="label">14 px</span><span class="font" style="font-size:14px">Hamburgefonts 0O1lI</span></div>
+        <div class="scale-row"><span class="label">15 px</span><span class="font" style="font-size:15px">Hamburgefonts 0O1lI</span></div>
+        <div class="scale-row"><span class="label">16 px</span><span class="font" style="font-size:16px">Hamburgefonts 0O1lI</span></div>
+      </section>
+
+      <section class="unicode">
+        <h2 data-index="06">Mathematical coverage</h2>
+        <p class="font">λ → ← ↔ ⇒ ⇐ ∀ ∃ ∈ ∉ ⊂ ⊆
+∪ ∩ ⟨ ⟩ ⊢ ℕ ℤ ℚ ℝ ∑ ∏ √ ∞
+α β γ δ ε θ π φ ψ ω ≠ ≤ ≥</p>
+      </section>
+
+      <section class="editor">
+        <h2 data-index="07">Live scratch field</h2>
+        <pre class="font" contenteditable="true" spellcheck="false">Edit or paste a real specimen here.
+0O 1lI| rn m  == != &lt;= &gt;= -&gt; =&gt;
+fn proof&lt;'a&gt;(x: &amp;'a str) -&gt; Option&lt;&amp;'a str&gt;</pre>
+      </section>
+    </div>
+
+    <footer>
+      <span>All proof text is rendered from the flake output, never the installed family.</span>
+      <span id="agent">loading renderer data</span>
+    </footer>
+  </main>
+  <script>
+    document.getElementById("raster").textContent = `${devicePixelRatio.toFixed(2)} dpr`;
+    document.getElementById("agent").textContent = navigator.userAgent;
+    document.fonts.ready.then(() => {
+      document.documentElement.dataset.fonts = "ready";
+    });
+  </script>
+</body>
+</html>

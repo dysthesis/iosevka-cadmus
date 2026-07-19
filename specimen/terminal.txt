@@ -1,0 +1,41 @@
+CONFUSABLES
+0 O o   1 l I |   rn m   8 B   5 S   2 Z   g 9 q
+Il1|  O0o  rnmmrn  B8B8  S5S5  Z2Z2  g9q
+
+LIGATURE GROUPS
+==  ===  !=  !==  !===  <=  >=
+->  ->>  -->  --->  =>  =>>  ==>
+<<  >>  <<=  >>=  2>&1  >>log  <<EOF
+
+NIX
+{ pkgs, lib, ... }:
+let inherit (lib) mkIf mkMerge;
+in { services.demo.enable = mkIf (pkgs.stdenv.isLinux) true; }
+
+RUST
+impl<'a, T: Iterator<Item = &'a str>> Parser<'a, T> {
+    fn next(&mut self) -> Result<Option<Token<'a>>, Error> {
+        self.input.next().map(parse).transpose()
+    }
+}
+
+LEAN
+theorem map_id (xs : List α) : xs.map id = xs := by
+  induction xs with
+  | nil => rfl
+  | cons x xs ih => simp [ih]
+∀ x : ℕ, x ≤ x + 1 → ⟨x, by omega⟩ ⊢ True
+
+SHELL AND JJ
+if [[ -n "$target" && "$count" -ge 1 ]]; then
+    command >out 2>&1 || printf '%s\n' "failed" >&2
+fi
+jj: <<<<<<< conflict 1 of 1
+%%%%%%% diff from left to right
+-old_value
++new_value
+jj: >>>>>>> conflict 1 of 1 ends
+
+PUNCTUATION AND SYMBOLS
+() [] {} <> /\ | _ - + = * & @ # $ % ^ ~ ` ' " : ; , . ? !
+λ → ← ↔ ⇒ ⇐ ∀ ∃ ∈ ∉ ⊂ ⊆ ∪ ∩ ⟨ ⟩ ⊢ ℕ ℤ ℚ ℝ ∑ ∏ √ ∞ ≠ ≤ ≥
