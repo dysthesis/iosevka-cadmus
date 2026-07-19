@@ -10,8 +10,18 @@ ligation set. The package contains Medium and Bold in upright and italic forms.
 nix build
 ```
 
-The TTF files are placed under `result/share/fonts/truetype`. Run the complete
-flake check with:
+Build the Nerd Font variant with:
+
+```sh
+nix build .#iosevka-cadmus-nerd-font
+```
+
+This adds every Nerd Fonts glyph set and constrains the added icons to one cell
+without changing the widths of Iosevka's existing glyphs. Its family name is
+`IosevkaCadmus Nerd Font Mono`; the unpatched font remains the default package.
+
+The TTF files are placed under `result/share/fonts/truetype`. Run both package
+checks with:
 
 ```sh
 nix flake check
@@ -46,6 +56,10 @@ scope full hinting to this family:
 }
 ```
 
+To install the patched variant instead, replace `.default` with
+`.iosevka-cadmus-nerd-font` and use `IosevkaCadmus Nerd Font Mono` as the family
+name in the Fontconfig rule.
+
 ## foot
 
 The ligature setting requires the corresponding patched foot and fcft builds.
@@ -57,3 +71,6 @@ font=Iosevka Cadmus:style=Medium:size=10.5
 [tweak]
 ligatures=yes
 ```
+
+For the patched variant, set
+`font=IosevkaCadmus Nerd Font Mono:style=Medium:size=10.5` instead.

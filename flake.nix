@@ -74,13 +74,39 @@
               };
             };
           };
+          iosevkaCadmusNerdFont =
+            pkgs.runCommand "IosevkaCadmusNerdFont-${iosevkaCadmus.version}"
+              {
+                nativeBuildInputs = [ pkgs.nerd-font-patcher ];
+              }
+              ''
+                fontDir="$out/share/fonts/truetype"
+                mkdir -p "$fontDir"
+
+                for font in ${iosevkaCadmus}/share/fonts/truetype/*.ttf; do
+                  nerd-font-patcher \
+                    --complete \
+                    --single-width-glyphs \
+                    --quiet \
+                    --no-progressbars \
+                    --outputdir "$fontDir" \
+                    "$font"
+                done
+
+                patchedFonts=("$fontDir"/*.ttf)
+                test "''${#patchedFonts[@]}" -eq 4
+              '';
         in
         {
-          checks.default = iosevkaCadmus;
+          checks = {
+            default = iosevkaCadmus;
+            nerd-font = iosevkaCadmusNerdFont;
+          };
 
           packages = {
             default = iosevkaCadmus;
             iosevka-cadmus = iosevkaCadmus;
+            iosevka-cadmus-nerd-font = iosevkaCadmusNerdFont;
           };
         };
     };
