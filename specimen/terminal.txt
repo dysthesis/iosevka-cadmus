@@ -5,6 +5,7 @@ Il1|  O0o  rnmmrn  B8B8  S5S5  Z2Z2  g9q
 LIGATURE GROUPS
 ==  ===  !=  !==  !===  <=  >=
 ->  ->>  -->  --->  =>  =>>  ==>
+::  :::  ..  ...  ::<u32>  Vec::new()
 <<  >>  <<=  >>=  2>&1  >>log  <<EOF
 
 NIX

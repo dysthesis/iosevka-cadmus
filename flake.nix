@@ -35,6 +35,7 @@
               "gteq"
               "arrow-r-hyphen"
               "arrow-r-equal"
+              "kern-dotty"
             ];
 
             weights = {
