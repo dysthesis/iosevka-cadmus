@@ -362,6 +362,14 @@ let
     '';
   };
 
+  confusability = pkgs.writeShellApplication {
+    name = "iosevka-confusability";
+    runtimeInputs = [ pkgs.python3 ];
+    text = ''
+      exec python3 ${./confusability.py} "$@"
+    '';
+  };
+
   mkApp = package: {
     type = "app";
     program = lib.getExe package;
@@ -369,6 +377,7 @@ let
 
   apps = {
     foot = mkApp foot;
+    confusability = mkApp confusability;
     foot-audition = mkApp footAudition;
     foot-screenshot = mkApp footScreenshot;
     foot-audition-screenshot = mkApp footAuditionScreenshot;
@@ -412,7 +421,10 @@ let
         touch "$out"
       '';
 
-  check = pkgs.runCommand "iosevka-cadmus-tooling-check" { } ''
+  check = pkgs.runCommand "iosevka-cadmus-tooling-check" {
+    nativeBuildInputs = [ pkgs.python3 ];
+  } ''
+    python3 ${./confusability.py} --selftest
     test -f ${webSpecimen}/index.html
     test -f ${webSpecimen}/fonts/IosevkaCadmus-Medium.ttf
     test -f ${webSpecimen}/fonts/IosevkaCadmus-MediumItalic.ttf
