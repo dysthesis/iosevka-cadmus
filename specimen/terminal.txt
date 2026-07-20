@@ -1,6 +1,6 @@
 CONFUSABLES
-0 O o   1 l I |   rn m   8 B   5 S   2 Z   g 9 q
-Il1|  O0o  rnmmrn  B8B8  S5S5  Z2Z2  g9q
+0 O o   1 l I |   rn m   8 B   5 S   2 Z   g 9 q   O Q
+Il1|  O0o  rnmmrn  B8B8  S5S5  Z2Z2  g9q  OQ0Q
 
 LIGATURE GROUPS
 ==  ===  !=  !==  !===  <=  >=
