@@ -6,9 +6,8 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
-  outputs =
-    inputs@{ flake-parts, ... }:
-    flake-parts.lib.mkFlake { inherit inputs; } {
+  outputs = inputs @ {flake-parts, ...}:
+    flake-parts.lib.mkFlake {inherit inputs;} {
       systems = [
         "x86_64-linux"
         "aarch64-linux"
@@ -16,81 +15,85 @@
         "x86_64-darwin"
       ];
 
-      perSystem =
-        { pkgs, ... }:
-        let
-          buildPlan = {
-            family = "Iosevka Cadmus";
-            spacing = "term";
-            serifs = "sans";
-            noCvSs = true;
-            exportGlyphNames = false;
+      perSystem = {pkgs, ...}: let
+        buildPlan = {
+          family = "Iosevka Cadmus";
+          spacing = "term";
+          serifs = "sans";
+          noCvSs = true;
+          exportGlyphNames = false;
 
-            variants.inherits = "ss03";
-            variants.design.capital-q = "crossing";
-            variants.upright.l = "serifed-flat-tailed";
+          variants = {
+            inherits = "ss03";
+            design.capital-q = "crossing";
+            upright.l = "serifed-flat-tailed";
+          };
 
-            ligations.enables = [
-              "eqeq"
-              "exeq"
-              "lteq"
-              "gteq"
-              # without llgg, lteq/gteq half-ligate the suffix of <<= and >>= 
-							# into "<≤" / ">≥"; whole-trigram ligation is coherent and leaves 
-              # << >> <<< and conflict markers alone.
-              "llggeq"
-              "arrow-r-hyphen"
-              "arrow-r-equal"
-              "kern-dotty"
-            ];
+          ligations.enables = [
+            "eqeq"
+            "exeq"
+            "lteq"
+            "gteq"
+            # without llgg, lteq/gteq half-ligate the suffix of <<= and >>=
+            # into "<≤" / ">≥"; whole-trigram ligation is coherent and leaves
+            # << >> <<< and conflict markers alone.
+            "llggeq"
+            "arrow-r-hyphen"
+            "arrow-r-equal"
+            "kern-dotty"
+          ];
 
-            weights = {
-              Medium = {
-                shape = 500;
-                menu = 500;
-                css = 500;
-              };
-              Bold = {
-                shape = 700;
-                menu = 700;
-                css = 700;
-              };
+          weights = {
+            Medium = {
+              shape = 500;
+              menu = 500;
+              css = 500;
             };
-
-            slopes = {
-              Upright = {
-                angle = 0;
-                shape = "upright";
-                menu = "upright";
-                css = "normal";
-              };
-              Italic = {
-                angle = 9.4;
-                shape = "italic";
-                menu = "italic";
-                css = "italic";
-              };
+            Bold = {
+              shape = 700;
+              menu = 700;
+              css = 700;
             };
+          };
 
-            widths.Normal = {
-              shape = 600;
-              menu = 5;
+          slopes = {
+            Upright = {
+              angle = 0;
+              shape = "upright";
+              menu = "upright";
               css = "normal";
             };
-          };
-          mkIosevka =
-            { set, plan }:
-            pkgs.iosevka.override {
-              inherit set;
-              privateBuildPlan = plan;
+            Italic = {
+              angle = 9.4;
+              shape = "italic";
+              menu = "italic";
+              css = "italic";
             };
-          iosevkaCadmus = mkIosevka {
-            set = "Cadmus";
-            plan = buildPlan;
           };
-          iosevkaCadmusAudition = mkIosevka {
-            set = "CadmusAudition";
-            plan = buildPlan // {
+
+          widths.Normal = {
+            shape = 600;
+            menu = 5;
+            css = "normal";
+          };
+        };
+        mkIosevka = {
+          set,
+          plan,
+        }:
+          pkgs.iosevka.override {
+            inherit set;
+            privateBuildPlan = plan;
+          };
+        iosevkaCadmus = mkIosevka {
+          set = "Cadmus";
+          plan = buildPlan;
+        };
+        iosevkaCadmusAudition = mkIosevka {
+          set = "CadmusAudition";
+          plan =
+            buildPlan
+            // {
               family = "Iosevka Cadmus Audition";
               noCvSs = false;
               weights = {
@@ -100,54 +103,54 @@
                 inherit (buildPlan.slopes) Upright;
               };
             };
-          };
-          mkNerdFont =
-            {
-              name,
-              singleWidth ? false,
-            }:
-            pkgs.runCommand "${name}-${iosevkaCadmus.version}"
-              {
-                nativeBuildInputs = [ pkgs.nerd-font-patcher ];
-              }
-              ''
-                fontDir="$out/share/fonts/truetype"
-                mkdir -p "$fontDir"
+        };
+        mkNerdFont = {
+          name,
+          singleWidth ? false,
+        }:
+          pkgs.runCommand "${name}-${iosevkaCadmus.version}"
+          {
+            nativeBuildInputs = [pkgs.nerd-font-patcher];
+          }
+          # sh
+          ''
+            fontDir="$out/share/fonts/truetype"
+            mkdir -p "$fontDir"
 
-                for font in ${iosevkaCadmus}/share/fonts/truetype/*.ttf; do
-                  nerd-font-patcher \
-                    --complete \
-                    ${pkgs.lib.optionalString singleWidth "--single-width-glyphs"} \
-                    --quiet \
-                    --no-progressbars \
-                    --outputdir "$fontDir" \
-                    "$font"
-                done
+            for font in ${iosevkaCadmus}/share/fonts/truetype/*.ttf; do
+              nerd-font-patcher \
+                --complete \
+                ${pkgs.lib.optionalString singleWidth "--single-width-glyphs"} \
+                --quiet \
+                --no-progressbars \
+                --outputdir "$fontDir" \
+                "$font"
+            done
 
-                patchedFonts=("$fontDir"/*.ttf)
-                test "''${#patchedFonts[@]}" -eq 4
-              '';
-          iosevkaCadmusNerdFont = mkNerdFont {
-            name = "IosevkaCadmusNerdFont";
-          };
-          iosevkaCadmusNerdFontMono = mkNerdFont {
-            name = "IosevkaCadmusNerdFontMono";
-            singleWidth = true;
-          };
-          tooling = import ./tools {
-            inherit
-              pkgs
-              iosevkaCadmus
-              iosevkaCadmusAudition
-              iosevkaCadmusNerdFont
-              iosevkaCadmusNerdFontMono
-              ;
-          };
-        in
-        {
-          apps = pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux tooling.apps;
+            patchedFonts=("$fontDir"/*.ttf)
+            test "''${#patchedFonts[@]}" -eq 4
+          '';
+        iosevkaCadmusNerdFont = mkNerdFont {
+          name = "IosevkaCadmusNerdFont";
+        };
+        iosevkaCadmusNerdFontMono = mkNerdFont {
+          name = "IosevkaCadmusNerdFontMono";
+          singleWidth = true;
+        };
+        tooling = import ./tools {
+          inherit
+            pkgs
+            iosevkaCadmus
+            iosevkaCadmusAudition
+            iosevkaCadmusNerdFont
+            iosevkaCadmusNerdFontMono
+            ;
+        };
+      in {
+        apps = pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux tooling.apps;
 
-          checks = {
+        checks =
+          {
             default = iosevkaCadmus;
             nerd-font = iosevkaCadmusNerdFont;
             nerd-font-mono = iosevkaCadmusNerdFontMono;
@@ -158,23 +161,24 @@
             tooling = tooling.check;
           };
 
-					devShells.default = pkgs.mkShellNoCC {
-						name = "iosevka-cadmus-dev";
-						packages = with pkgs; [
-# Nix
-nil
-statix
-deadnix
-alejandra
+        devShells.default = pkgs.mkShellNoCC {
+          name = "iosevka-cadmus-dev";
+          packages = with pkgs; [
+            # Nix
+            nil
+            statix
+            deadnix
+            alejandra
 
-# Python
-						basedpyright
-						pyright
-						black
-						];
-						};
+            # Python
+            basedpyright
+            pyright
+            black
+          ];
+        };
 
-          packages = {
+        packages =
+          {
             default = iosevkaCadmus;
             audition = iosevkaCadmusAudition;
             iosevka-cadmus = iosevkaCadmus;
@@ -184,6 +188,6 @@ alejandra
           // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
             specimen = tooling.webSpecimen;
           };
-        };
+      };
     };
 }
