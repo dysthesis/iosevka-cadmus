@@ -48,7 +48,8 @@ Font families, their icon-size contracts, and preservation of ASCII metrics.
 ## NixOS
 
 Given this flake as an input named `iosevka-cadmus`, install the package and
-scope full hinting to this family:
+scope full hinting and greyscale antialiasing to this family (greyscale is the
+audited render path; subpixel only adds chroma fringing to pixel-exact stems):
 
 ```nix
 { inputs, pkgs, ... }:
@@ -67,6 +68,12 @@ scope full hinting to this family:
         </test>
         <edit name="hintstyle" mode="assign">
           <const>hintfull</const>
+        </edit>
+        <edit name="rgba" mode="assign">
+          <const>none</const>
+        </edit>
+        <edit name="lcdfilter" mode="assign">
+          <const>lcdnone</const>
         </edit>
       </match>
     </fontconfig>
