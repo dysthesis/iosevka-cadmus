@@ -35,9 +35,9 @@
               "exeq"
               "lteq"
               "gteq"
-              # llggeq: without it, lteq/gteq half-ligate the suffix of
-              # <<= and >>= into "<≤" / ">≥"; whole-trigram ligation is
-              # coherent and leaves << >> <<< and conflict markers alone.
+              # without llgg, lteq/gteq half-ligate the suffix of <<= and >>= 
+							# into "<≤" / ">≥"; whole-trigram ligation is coherent and leaves 
+              # << >> <<< and conflict markers alone.
               "llggeq"
               "arrow-r-hyphen"
               "arrow-r-equal"
@@ -157,6 +157,22 @@
           // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
             tooling = tooling.check;
           };
+
+					devShells.default = pkgs.mkShellNoCC {
+						name = "iosevka-cadmus-dev";
+						packages = with pkgs; [
+# Nix
+nil
+statix
+deadnix
+alejandra
+
+# Python
+						basedpyright
+						pyright
+						black
+						];
+						};
 
           packages = {
             default = iosevkaCadmus;
