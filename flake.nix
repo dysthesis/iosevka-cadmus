@@ -29,19 +29,22 @@
             upright.l = "serifed-flat-tailed";
           };
 
-          ligations.enables = [
-            "eqeq"
-            "exeq"
-            "lteq"
-            "gteq"
-            # without llgg, lteq/gteq half-ligate the suffix of <<= and >>=
-            # into "<≤" / ">≥"; whole-trigram ligation is coherent and leaves
-            # << >> <<< and conflict markers alone.
-            "llggeq"
-            "arrow-r-hyphen"
-            "arrow-r-equal"
-            "kern-dotty"
-          ];
+          ligations = {
+            inherits = "dlig";
+            enables = [
+              "eqeq"
+              "exeq"
+              "lteq"
+              "gteq"
+              # without llgg, lteq/gteq half-ligate the suffix of <<= and >>=
+              # into "<≤" / ">≥"; whole-trigram ligation is coherent and leaves
+              # << >> <<< and conflict markers alone.
+              "llggeq"
+              "arrow-r-hyphen"
+              "arrow-r-equal"
+              "kern-dotty"
+            ];
+          };
 
           weights = {
             Medium = {
