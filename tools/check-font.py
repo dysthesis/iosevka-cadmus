@@ -3,19 +3,25 @@
 Usage: check-font.py FONTDIR [FILENAME_PREFIX]
 
 Fails when an Iosevka or nixpkgs update silently drops a face, strips the
-TrueType hinting tables, changes the ligation behaviour, or breaks the
-600-unit monospace advance.
+TrueType hinting tables, changes the ligation behaviour, breaks the
+600-unit monospace advance, or degrades the box-drawing/block coverage
+terminals rely on for seamless rules and blocks.
 """
 
 import sys
 from pathlib import Path
 
 import uharfbuzz as hb
+from fontTools.pens.boundsPen import BoundsPen
 from fontTools.ttLib import TTFont
 
 FACE_SUFFIXES = {"Medium", "MediumItalic", "Bold", "BoldItalic"}
 HINTING_TABLES = ("cvt ", "fpgm", "prep")
 CELL = 600
+# Vertical cell edges: U+2588 FULL BLOCK must fill exactly this box.
+CELL_BOTTOM, CELL_TOP = -285, 965
+# Box drawing U+2500-257F plus block elements U+2580-259F.
+BOX_BLOCK = range(0x2500, 0x25A0)
 
 # Every sequence the enabled ligation groups must transform.
 MUST_LIGATE = [
@@ -35,6 +41,38 @@ MUST_NOT_LIGATE = [
     "2>&1",
     "<<<<<<<", ">>>>>>>", "%%%%%%%",           # jj/git conflict markers
 ]
+
+
+def glyph_bounds(tt, glyph_name):
+    glyphs = tt.getGlyphSet()
+    pen = BoundsPen(glyphs)
+    glyphs[glyph_name].draw(pen)
+    return pen.bounds
+
+
+def check_box_drawing(tt, cmap, metrics):
+    errors = []
+    missing = [f"U+{cp:04X}" for cp in BOX_BLOCK if cp not in cmap]
+    if missing:
+        return [f"missing box/block glyphs {missing}"]
+    bad = {
+        f"U+{cp:04X}": metrics[cmap[cp]][0]
+        for cp in BOX_BLOCK
+        if metrics[cmap[cp]][0] != CELL
+    }
+    if bad:
+        errors.append(f"non-{CELL} box/block advances {bad}")
+
+    full = glyph_bounds(tt, cmap[0x2588])
+    if full != (0, CELL_BOTTOM, CELL, CELL_TOP):
+        errors.append(f"U+2588 bbox {full} != (0, {CELL_BOTTOM}, {CELL}, {CELL_TOP})")
+    hbar = glyph_bounds(tt, cmap[0x2500])
+    if (hbar[0], hbar[2]) != (0, CELL):
+        errors.append(f"U+2500 x-span {hbar[0]}..{hbar[2]} != 0..{CELL}")
+    vbar = glyph_bounds(tt, cmap[0x2502])
+    if (vbar[1], vbar[3]) != (CELL_BOTTOM, CELL_TOP):
+        errors.append(f"U+2502 y-span {vbar[1]}..{vbar[3]} != {CELL_BOTTOM}..{CELL_TOP}")
+    return errors
 
 
 def shape(font, text, calt):
@@ -64,6 +102,7 @@ def check_face(path):
     }
     if bad_ascii:
         errors.append(f"non-{CELL} ASCII advances {bad_ascii}")
+    errors += check_box_drawing(tt, cmap, metrics)
 
     font = hb.Font(hb.Face(hb.Blob.from_file_path(str(path))))
     for text in MUST_LIGATE + MUST_NOT_LIGATE:

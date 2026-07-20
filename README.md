@@ -41,9 +41,11 @@ nix flake check
 
 The `font-semantics` check (`tools/check-font.py`) asserts the rendering
 contract: the exact four faces, the TrueType hinting tables, the `calt`
-ligation behaviour including untouched jj/git conflict markers, and 600-unit
-advances for every shaped component. `nerd-font-semantics` additionally checks both Nerd
-Font families, their icon-size contracts, and preservation of ASCII metrics.
+ligation behaviour including untouched jj/git conflict markers, 600-unit
+advances for every shaped component, and box-drawing/block glyphs that fill
+the cell exactly. `nerd-font-semantics` additionally checks both Nerd Font
+families, their icon-size contracts, powerline cell fit, and preservation of
+ASCII metrics.
 
 ## NixOS
 
