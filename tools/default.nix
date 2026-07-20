@@ -135,6 +135,9 @@ let
           --title=${lib.escapeShellArg title}
           --app-id=iosevka-cadmus-specimen
         )
+        if [[ -n "''${IOSEVKA_LINE_HEIGHT_PX:-}" ]]; then
+          foot_args+=("--override=main.line-height=''${IOSEVKA_LINE_HEIGHT_PX}px")
+        fi
         if [[ $# -eq 0 ]]; then
           exec "$foot_bin" "''${foot_args[@]}" --hold ${lib.getExe terminalRenderer}
         fi
@@ -211,6 +214,9 @@ let
         export WLR_RENDERER=pixman
         export IOSEVKA_SCREENSHOT_OUTPUT="$output"
         export IOSEVKA_FONT_PATTERN="${family}:pixelsize=''${IOSEVKA_PIXEL_SIZE:-14}"
+        # simplification: integer pixel sizes only; the default 15.75pt line
+        # height does not track pixelsize overrides, so scale it here (3/2).
+        export IOSEVKA_LINE_HEIGHT_PX="$(( ''${IOSEVKA_PIXEL_SIZE:-14} * 3 / 2 ))"
 
         ${lib.getExe pkgs.cage} -- ${capture}
         if [[ ! -s "$output" ]]; then

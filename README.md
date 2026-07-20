@@ -123,7 +123,8 @@ launchers use `foot` from `PATH` and verify that it accepts
 `tweak.ligatures=yes`; the wrapper in
 `~/Documents/Projects/laplace/user/wrapped/foot` satisfies this requirement.
 `IOSEVKA_SIZE` changes the interactive point size, while
-`IOSEVKA_PIXEL_SIZE` changes the deterministic foot capture size.
+`IOSEVKA_PIXEL_SIZE` changes the deterministic foot capture size; the capture
+scales the line height with it.
 
 The headless foot capture runs the real patched foot/fcft path inside a private
 wlroots compositor. Browser captures are suitable for comparing outlines,
