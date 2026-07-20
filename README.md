@@ -71,15 +71,20 @@ The ligature setting requires the corresponding patched foot and fcft builds.
 
 ```ini
 [main]
-font=Iosevka Cadmus:style=Medium:size=10.5
+font=Iosevka Cadmus:size=10.5
 dpi-aware=yes
 
 [tweak]
 ligatures=yes
 ```
 
+Do not pin `style=Medium` in the pattern: fontconfig then resolves foot's
+derived bold and italic requests back to the Medium upright face. The family
+alone matches Medium as the regular weight and lets bold/italic escalation
+work.
+
 For the patched variant, set
-`font=IosevkaCadmus Nerd Font Mono:style=Medium:size=10.5` instead.
+`font=IosevkaCadmus Nerd Font Mono:size=10.5` instead.
 
 ## Inspection tooling
 

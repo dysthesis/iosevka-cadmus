@@ -37,7 +37,9 @@ let
     family:
     pkgs.writeText "${lib.strings.sanitizeDerivationName family}-foot.ini" ''
       [main]
-      font=${family}:style=Medium:size=10.5
+      # No style= pin: fontconfig would then ignore foot's derived
+      # weight/slant and resolve every face to Medium upright.
+      font=${family}:size=10.5
       dpi-aware=yes
       line-height=15.75
       pad=16x16
@@ -115,7 +117,7 @@ let
           exit 1
         fi
 
-        font_pattern="''${IOSEVKA_FONT_PATTERN:-${family}:style=Medium:size=''${IOSEVKA_SIZE:-10.5}}"
+        font_pattern="''${IOSEVKA_FONT_PATTERN:-${family}:size=''${IOSEVKA_SIZE:-10.5}}"
         if [[ -n "''${IOSEVKA_FONT_FEATURES:-}" ]]; then
           old_ifs="$IFS"
           IFS=',' read -r -a features <<< "$IOSEVKA_FONT_FEATURES"
@@ -208,7 +210,7 @@ let
         export WLR_HEADLESS_OUTPUTS=1
         export WLR_RENDERER=pixman
         export IOSEVKA_SCREENSHOT_OUTPUT="$output"
-        export IOSEVKA_FONT_PATTERN="${family}:style=Medium:pixelsize=''${IOSEVKA_PIXEL_SIZE:-14}"
+        export IOSEVKA_FONT_PATTERN="${family}:pixelsize=''${IOSEVKA_PIXEL_SIZE:-14}"
 
         ${lib.getExe pkgs.cage} -- ${capture}
         if [[ ! -s "$output" ]]; then
