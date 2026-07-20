@@ -1,3 +1,5 @@
 /artifacts/
-result
+result*
 .direnv/
+.claude/
+.tokensave/
