@@ -2,6 +2,8 @@
   pkgs,
   iosevkaCadmus,
   iosevkaCadmusAudition,
+  iosevkaCadmusNerdFont,
+  iosevkaCadmusNerdFontMono,
 }:
 
 let
@@ -389,6 +391,25 @@ let
         touch "$out"
       '';
 
+  nerdFontCheck =
+    pkgs.runCommand "iosevka-cadmus-nerd-font-check"
+      {
+        nativeBuildInputs = [
+          (pkgs.python3.withPackages (p: [
+            p.fonttools
+            p.uharfbuzz
+          ]))
+        ];
+      }
+      ''
+        wide=${iosevkaCadmusNerdFont}/share/fonts/truetype
+        mono=${iosevkaCadmusNerdFontMono}/share/fonts/truetype
+        python3 ${./check-font.py} "$wide" IosevkaCadmusNerdFont
+        python3 ${./check-font.py} "$mono" IosevkaCadmusNerdFontMono
+        python3 ${./check-nerd-font.py} "$wide" "$mono"
+        touch "$out"
+      '';
+
   check = pkgs.runCommand "iosevka-cadmus-tooling-check" { } ''
     test -f ${webSpecimen}/index.html
     test -f ${webSpecimen}/fonts/IosevkaCadmus-Medium.ttf
@@ -404,6 +425,7 @@ in
     apps
     check
     fontCheck
+    nerdFontCheck
     webSpecimen
     ;
 }

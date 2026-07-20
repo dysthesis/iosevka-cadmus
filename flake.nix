@@ -27,6 +27,8 @@
             exportGlyphNames = false;
 
             variants.inherits = "ss03";
+            variants.design.capital-q = "crossing";
+            variants.upright.l = "serifed-flat-tailed";
 
             ligations.enables = [
               "eqeq"
@@ -99,8 +101,12 @@
               };
             };
           };
-          iosevkaCadmusNerdFont =
-            pkgs.runCommand "IosevkaCadmusNerdFont-${iosevkaCadmus.version}"
+          mkNerdFont =
+            {
+              name,
+              singleWidth ? false,
+            }:
+            pkgs.runCommand "${name}-${iosevkaCadmus.version}"
               {
                 nativeBuildInputs = [ pkgs.nerd-font-patcher ];
               }
@@ -111,6 +117,7 @@
                 for font in ${iosevkaCadmus}/share/fonts/truetype/*.ttf; do
                   nerd-font-patcher \
                     --complete \
+                    ${pkgs.lib.optionalString singleWidth "--single-width-glyphs"} \
                     --quiet \
                     --no-progressbars \
                     --outputdir "$fontDir" \
@@ -120,8 +127,21 @@
                 patchedFonts=("$fontDir"/*.ttf)
                 test "''${#patchedFonts[@]}" -eq 4
               '';
+          iosevkaCadmusNerdFont = mkNerdFont {
+            name = "IosevkaCadmusNerdFont";
+          };
+          iosevkaCadmusNerdFontMono = mkNerdFont {
+            name = "IosevkaCadmusNerdFontMono";
+            singleWidth = true;
+          };
           tooling = import ./tools {
-            inherit pkgs iosevkaCadmus iosevkaCadmusAudition;
+            inherit
+              pkgs
+              iosevkaCadmus
+              iosevkaCadmusAudition
+              iosevkaCadmusNerdFont
+              iosevkaCadmusNerdFontMono
+              ;
           };
         in
         {
@@ -130,7 +150,9 @@
           checks = {
             default = iosevkaCadmus;
             nerd-font = iosevkaCadmusNerdFont;
+            nerd-font-mono = iosevkaCadmusNerdFontMono;
             font-semantics = tooling.fontCheck;
+            nerd-font-semantics = tooling.nerdFontCheck;
           }
           // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
             tooling = tooling.check;
@@ -141,6 +163,7 @@
             audition = iosevkaCadmusAudition;
             iosevka-cadmus = iosevkaCadmus;
             iosevka-cadmus-nerd-font = iosevkaCadmusNerdFont;
+            iosevka-cadmus-nerd-font-mono = iosevkaCadmusNerdFontMono;
           }
           // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
             specimen = tooling.webSpecimen;

@@ -1,6 +1,6 @@
 """Semantic checks for the Iosevka Cadmus rendering contract.
 
-Usage: check-font.py FONTDIR
+Usage: check-font.py FONTDIR [FILENAME_PREFIX]
 
 Fails when an Iosevka or nixpkgs update silently drops a face, strips the
 TrueType hinting tables, changes the ligation behaviour, or breaks the
@@ -13,12 +13,7 @@ from pathlib import Path
 import uharfbuzz as hb
 from fontTools.ttLib import TTFont
 
-EXPECTED_FACES = {
-    "IosevkaCadmus-Medium.ttf",
-    "IosevkaCadmus-MediumItalic.ttf",
-    "IosevkaCadmus-Bold.ttf",
-    "IosevkaCadmus-BoldItalic.ttf",
-}
+FACE_SUFFIXES = {"Medium", "MediumItalic", "Bold", "BoldItalic"}
 HINTING_TABLES = ("cvt ", "fpgm", "prep")
 CELL = 600
 
@@ -59,6 +54,16 @@ def check_face(path):
     if upm != 1000:  # CELL = 600 assumes Iosevka's 1000-unit em
         errors.append(f"unexpected unitsPerEm {upm}")
 
+    cmap = tt.getBestCmap()
+    metrics = tt["hmtx"].metrics
+    bad_ascii = {
+        chr(codepoint): metrics[cmap[codepoint]][0]
+        for codepoint in range(0x20, 0x7F)
+        if metrics[cmap[codepoint]][0] != CELL
+    }
+    if bad_ascii:
+        errors.append(f"non-{CELL} ASCII advances {bad_ascii}")
+
     font = hb.Font(hb.Face(hb.Blob.from_file_path(str(path))))
     for text in MUST_LIGATE + MUST_NOT_LIGATE:
         shaped = shape(font, text, calt=True)
@@ -78,12 +83,14 @@ def check_face(path):
 
 def main():
     fontdir = Path(sys.argv[1])
+    prefix = sys.argv[2] if len(sys.argv) > 2 else "IosevkaCadmus"
+    expected_faces = {f"{prefix}-{suffix}.ttf" for suffix in FACE_SUFFIXES}
     faces = {p.name for p in fontdir.glob("*.ttf")}
     failed = False
-    if faces != EXPECTED_FACES:
-        print(f"face set mismatch:\n  extra: {faces - EXPECTED_FACES}\n  missing: {EXPECTED_FACES - faces}")
+    if faces != expected_faces:
+        print(f"face set mismatch:\n  extra: {faces - expected_faces}\n  missing: {expected_faces - faces}")
         failed = True
-    for name in sorted(faces & EXPECTED_FACES):
+    for name in sorted(faces & expected_faces):
         for err in check_face(fontdir / name):
             print(f"{name}: {err}")
             failed = True

@@ -1,8 +1,9 @@
 # Iosevka Cadmus
 
 A terminal-focused Iosevka build for low-DPI displays. It uses 600-unit cells,
-term spacing, the Consolas-style `ss03` variants, and a deliberately small
-ligation set. The package contains Medium and Bold in upright and italic forms.
+term spacing, the Consolas-style `ss03` variants with a clearer crossing `Q`
+and flat-tailed upright `l`, and a deliberately small ligation set. The package
+contains Medium and Bold in upright and italic forms.
 
 ## Build
 
@@ -10,15 +11,26 @@ ligation set. The package contains Medium and Bold in upright and italic forms.
 nix build
 ```
 
-Build the Nerd Font variant with:
+Build the Nerd Font variant with original-size icons with:
 
 ```sh
 nix build .#iosevka-cadmus-nerd-font
 ```
 
-This adds every Nerd Fonts glyph set and constrains the added icons to one cell
-without changing the widths of Iosevka's existing glyphs. Its family name is
-`IosevkaCadmus Nerd Font Mono`; the unpatched font remains the default package.
+This adds every Nerd Fonts glyph set without changing the widths of Iosevka's
+existing glyphs. The icons retain their larger artwork and can overhang adjacent
+cells, so this variant is best when icons are isolated or padded. Its family
+name is `IosevkaCadmus Nerd Font`.
+
+For Nerd Fonts' single-width icon scaling, which is safer beside terminal text,
+build:
+
+```sh
+nix build .#iosevka-cadmus-nerd-font-mono
+```
+
+Its family name is `IosevkaCadmus Nerd Font Mono`. The unpatched font remains
+the default package.
 
 The TTF files are placed under `result/share/fonts/truetype`. Run all flake
 checks with:
@@ -30,7 +42,8 @@ nix flake check
 The `font-semantics` check (`tools/check-font.py`) asserts the rendering
 contract: the exact four faces, the TrueType hinting tables, the `calt`
 ligation behaviour including untouched `<<`/`>>`, and 600-unit advances for
-every shaped component.
+every shaped component. `nerd-font-semantics` additionally checks both Nerd
+Font families, their icon-size contracts, and preservation of ASCII metrics.
 
 ## NixOS
 
@@ -61,9 +74,10 @@ scope full hinting to this family:
 }
 ```
 
-To install the patched variant instead, replace `.default` with
-`.iosevka-cadmus-nerd-font` and use `IosevkaCadmus Nerd Font Mono` as the family
-name in the Fontconfig rule.
+To install an original-size patched variant instead, replace `.default` with
+`.iosevka-cadmus-nerd-font` and use `IosevkaCadmus Nerd Font` as the family name
+in the Fontconfig rule. For the single-width variant, use
+`.iosevka-cadmus-nerd-font-mono` and `IosevkaCadmus Nerd Font Mono`.
 
 ## foot
 
@@ -78,13 +92,18 @@ dpi-aware=yes
 ligatures=yes
 ```
 
+With `dpi-aware=yes`, point sizes already track the monitor's physical DPI.
+Use the same `size` across correctly reported displays; use `pixelsize` only
+for exact raster auditions.
+
 Do not pin `style=Medium` in the pattern: fontconfig then resolves foot's
 derived bold and italic requests back to the Medium upright face. The family
 alone matches Medium as the regular weight and lets bold/italic escalation
 work.
 
-For the patched variant, set
-`font=IosevkaCadmus Nerd Font Mono:size=10.5` instead.
+For the original-size patched variant, set
+`font=IosevkaCadmus Nerd Font:size=10.5` instead. For the single-width variant,
+use `font=IosevkaCadmus Nerd Font Mono:size=10.5`.
 
 ## Inspection tooling
 
