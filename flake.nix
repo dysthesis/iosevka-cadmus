@@ -111,7 +111,6 @@
                 for font in ${iosevkaCadmus}/share/fonts/truetype/*.ttf; do
                   nerd-font-patcher \
                     --complete \
-                    --single-width-glyphs \
                     --quiet \
                     --no-progressbars \
                     --outputdir "$fontDir" \
