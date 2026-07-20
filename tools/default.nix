@@ -170,7 +170,7 @@ let
     let
       capture = pkgs.writeShellScript "${name}-capture" ''
         set -euo pipefail
-        ${lib.getExe pkgs.wlr-randr} --output HEADLESS-1 --custom-mode 1400x1200
+        ${lib.getExe pkgs.wlr-randr} --output HEADLESS-1 --custom-mode "''${IOSEVKA_CAPTURE_MODE:-1400x1200}"
         ${launcher}/bin/${launcherName} &
         foot_pid=$!
 

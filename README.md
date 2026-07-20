@@ -124,7 +124,9 @@ launchers use `foot` from `PATH` and verify that it accepts
 `~/Documents/Projects/laplace/user/wrapped/foot` satisfies this requirement.
 `IOSEVKA_SIZE` changes the interactive point size, while
 `IOSEVKA_PIXEL_SIZE` changes the deterministic foot capture size; the capture
-scales the line height with it.
+scales the line height with it. Above roughly 22 px the full specimen no
+longer fits the default 1400x1200 headless output and scrolls, so raise
+`IOSEVKA_CAPTURE_MODE` (for example `3040x3160` for 40 px).
 
 The headless foot capture runs the real patched foot/fcft path inside a private
 wlroots compositor. Browser captures are suitable for comparing outlines,
