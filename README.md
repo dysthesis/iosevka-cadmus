@@ -27,6 +27,11 @@ checks with:
 nix flake check
 ```
 
+The `font-semantics` check (`tools/check-font.py`) asserts the rendering
+contract: the exact four faces, the TrueType hinting tables, the `calt`
+ligation behaviour including untouched `<<`/`>>`, and 600-unit advances for
+every shaped component.
+
 ## NixOS
 
 Given this flake as an input named `iosevka-cadmus`, install the package and

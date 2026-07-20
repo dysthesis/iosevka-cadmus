@@ -127,6 +127,7 @@
           checks = {
             default = iosevkaCadmus;
             nerd-font = iosevkaCadmusNerdFont;
+            font-semantics = tooling.fontCheck;
           }
           // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
             tooling = tooling.check;

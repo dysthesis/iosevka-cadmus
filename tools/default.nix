@@ -366,6 +366,21 @@ let
     firefox-screenshot = mkApp firefoxScreenshot;
   };
 
+  fontCheck =
+    pkgs.runCommand "iosevka-cadmus-font-check"
+      {
+        nativeBuildInputs = [
+          (pkgs.python3.withPackages (p: [
+            p.fonttools
+            p.uharfbuzz
+          ]))
+        ];
+      }
+      ''
+        python3 ${./check-font.py} ${iosevkaCadmus}/share/fonts/truetype
+        touch "$out"
+      '';
+
   check = pkgs.runCommand "iosevka-cadmus-tooling-check" { } ''
     test -f ${webSpecimen}/index.html
     test -f ${webSpecimen}/fonts/IosevkaCadmus-Medium.ttf
@@ -377,5 +392,10 @@ let
   '';
 in
 {
-  inherit apps check webSpecimen;
+  inherit
+    apps
+    check
+    fontCheck
+    webSpecimen
+    ;
 }
