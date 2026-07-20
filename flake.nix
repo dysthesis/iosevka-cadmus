@@ -33,6 +33,10 @@
               "exeq"
               "lteq"
               "gteq"
+              # llggeq: without it, lteq/gteq half-ligate the suffix of
+              # <<= and >>= into "<≤" / ">≥"; whole-trigram ligation is
+              # coherent and leaves << >> <<< and conflict markers alone.
+              "llggeq"
               "arrow-r-hyphen"
               "arrow-r-equal"
               "kern-dotty"

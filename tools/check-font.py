@@ -26,13 +26,14 @@ CELL = 600
 MUST_LIGATE = [
     "==", "===", "!=", "!==", "!===",          # eqeq, exeq
     "<=", ">=",                                # lteq, gteq
+    "<<=", ">>=",                              # llggeq
     "->", "->>", "-->", "--->",                # arrow-r-hyphen
     "=>", "=>>", "==>",                        # arrow-r-equal
     "::", ":::", "...",                        # kern-dotty
 ]
 
 # Sequences that must shape identically with and without calt.
-# `=!=`, `<<=`, `>>=` are excluded: their `!=`/`<=`/`>=` suffixes ligate.
+# `=!=` is excluded: its `!=` suffix ligates.
 MUST_NOT_LIGATE = [
     "<<", ">>", "<<<", ">>>", "2>&1",
     "<-", "://", "=:=",
