@@ -2,6 +2,10 @@ CONFUSABLES
 0 O o   1 l I |   rn m   8 B   5 S   2 Z   g 9 q   O Q
 Il1|  O0o  rnmmrn  B8B8  S5S5  Z2Z2  g9q  OQ0Q
 
+DIGITS
+0123456789  0O 3E 8B 9g 6b 5S 2Z 7T 4A
+63 69 96 38 83 909 636 969
+
 LIGATURE GROUPS
 ==  ===  !=  !==  !===  <=  >=
 ->  ->>  -->  --->  =>  =>>  ==>
@@ -36,6 +40,15 @@ jj: <<<<<<< conflict 1 of 1
 -old_value
 +new_value
 jj: >>>>>>> conflict 1 of 1 ends
+
+QUOTES AND TICKS
+` ' " `' '` x`x x'x x"x  'q' `bt` "d"
+
+BRACES NESTING
+{[()]} ({[]}) {{[[(())]]}}  {a} [a] (a) <a>
+
+TILDE DASH COLON
+~ - ~- -~ a~b a-b  ; : ;: :; i;l ,. .;
 
 PUNCTUATION AND SYMBOLS
 () [] {} <> /\ | _ - + = * & @ # $ % ^ ~ ` ' " : ; , . ? !
