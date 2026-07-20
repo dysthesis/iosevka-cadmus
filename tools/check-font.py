@@ -25,13 +25,14 @@ MUST_LIGATE = [
     "->", "->>", "-->", "--->",                # arrow-r-hyphen
     "=>", "=>>", "==>",                        # arrow-r-equal
     "::", ":::", "...",                        # kern-dotty
+    "<<", ">>", "<<<", ">>>",                  # dlig inheritance (d263016)
+    "<-", "://", "=:=",
 ]
 
 # Sequences that must shape identically with and without calt.
 # `=!=` is excluded: its `!=` suffix ligates.
 MUST_NOT_LIGATE = [
-    "<<", ">>", "<<<", ">>>", "2>&1",
-    "<-", "://", "=:=",
+    "2>&1",
     "<<<<<<<", ">>>>>>>", "%%%%%%%",           # jj/git conflict markers
 ]
 

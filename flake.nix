@@ -42,7 +42,7 @@
               "gteq"
               # without llgg, lteq/gteq half-ligate the suffix of <<= and >>=
               # into "<≤" / ">≥"; whole-trigram ligation is coherent and leaves
-              # << >> <<< and conflict markers alone.
+              # conflict markers alone (dlig ligates << >> <<< since d263016).
               "llggeq"
               "arrow-r-hyphen"
               "arrow-r-equal"
